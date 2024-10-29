@@ -1,6 +1,6 @@
 #   S A P - R E N T E     #
 #   -------------------   #
-#   bernie   17.07.2024   #
+#   bernie   22.08.2024   #
 #   -------------------   #
 
 """
@@ -23,7 +23,7 @@ def datumsumwandlung_date(jahr, monat, tag):
     return datum
 
 def typencheck(eingabe, typ, text):
-    """ überprüft eingeg. Wert auf korrektes Type-Format """
+    """ überprüft den eingeg. Wert auf korrektes Type-Format """
     if (typ == 'int'):
         dummy_int = 0
         while isinstance(dummy_int, int):
@@ -59,7 +59,7 @@ def typencheck(eingabe, typ, text):
     return ausgabe
 
 def datum_tage_netto(datum, tage):
-    """ ermittelt aus Kalendertagen eine neues Datum """
+    """ ermittelt aus Kalendertagen ein neues Datum """
     # um die Wochenenden zu berücksichtigen, werden die Tage mit 1.4 multipliziert,
     # denn: 5 x 1,4 = 7
     faktor = 1.4
@@ -80,15 +80,14 @@ def tage_brutto(datum):
     tage_summe = datum - date.today()
     return tage_summe
 
-def tage_netto(tage):
+def tage_netto(bruttotage):
     """ ermittelt Arbeitstage """
     # um Wochenenden & Feiertage zu berücksichtigen, werden die Tage mit 0,7 multipliziert,
     # denn: 0,7 x 365 = 255
     faktor = 0.7
-    tage_schaffe = (tage * faktor)
-    return tage_schaffe
+    tage_schaffe_brutto = (bruttotage * faktor)
+    return tage_schaffe_brutto
 
-# def ergebnis_ausgabe(datum_brutto, datum_temp, datum_netto, frei_tage, brutto_tage, netto_tage):
 def ergebnis_ausgabe(datum_netto, netto_tage):
     """ Ausgabe des ermittelten Datums """
     print("\nERGEBNIS")
@@ -101,6 +100,7 @@ def ergebnis_ausgabe(datum_netto, netto_tage):
 # Beginn Hauptprogramm
 heute = date.today()
 resturlaub_t = 0
+neuurlaub_t = 0
 azk_h = 0
 # Ein-/Ausgabe nur via Text-Konsole:
 print("Willkommen zum Projekt SAP-Rente! - Wann bin ich dran? \t ", heute)
@@ -108,8 +108,9 @@ print("\nPARAMETER-EINGABE")
 rar_datum_string = input("Beginn der Regelaltersrente gem. Rentenauskunft (TT.MM.JJJJ): \t ")
 rar = typencheck(rar_datum_string, "date", "Datum (TT.MM.JJJJ): \t ")
 resturlaub_t = typencheck(resturlaub_t, "float", "Resturlaub in Tagen (Punkt als Separator): \t ")
+neuurlaub_t = typencheck(neuurlaub_t, "float", "neuer nicht-verfallbarer Urlaub (max. 12t/Jahr) in Tagen (Punkt als Separator): \t ")
 azk_h = typencheck(azk_h, "float", "gesammelte h im AZK (Punkt als Separator): \t ")
-u_azk_tage = resturlaub_t + (azk_h // 8)
+u_azk_tage = resturlaub_t + neuurlaub_t + (azk_h // 8)
 netto_datum = datum_tage_netto(rar, u_azk_tage)
 brutto_tage = tage_brutto(netto_datum)
 netto_tage = tage_netto(brutto_tage)
